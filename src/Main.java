@@ -3,14 +3,18 @@ import Controller.InvoiceItemsTableController;
 import Controller.UpdateMainComponents;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
  class Main extends JFrame implements ActionListener {
      InvoiceTableController invoiceTableController = new InvoiceTableController();
      InvoiceItemsTableController invoiceItemsTableController = new InvoiceItemsTableController();
+     public String invoiceFile = new String();
+     public String invoiceItemsFile = new String();
 
      JLabel invoiceNumberValue = new javax.swing.JLabel();
      JLabel invoiceDateValue = new javax.swing.JLabel();
@@ -41,7 +45,8 @@ import java.io.IOException;
 
         JButton jBtn_create = new JButton("Create");
         JButton jBtn_delete = new JButton("Delete");
-        JButton jBtn_saveData = new JButton("Save All Data");
+        JButton jBtn_saveData = new JButton("Save");
+        JButton jBtn_loadData = new JButton("Load");
         JButton jBtn_save = new JButton("Add Item");
         JButton jBtn_cancel = new JButton("Delete Item");
 
@@ -52,9 +57,42 @@ import java.io.IOException;
             public void actionPerformed(ActionEvent e)
             {
                 try {
-                    invoiceTableController.saveData();
+                    invoiceTableController.saveData(invoiceFile,invoiceItemsFile);
+                    System.out.println(invoiceFile);
+                    System.out.println(invoiceItemsFile);
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        jBtn_loadData.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                try {
+                    File selectedInvoiceFile = new File("C:\\Users\\mennatallahw\\Desktop\\invoices.csv");
+                    File selectedInvoiceItemsFile = new File("C:\\Users\\mennatallahw\\Desktop\\invoice_items.csv");
+                    JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                    int returnValue = jfc.showOpenDialog(null);
+                    // int returnValue = jfc.showSaveDialog(null);
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        selectedInvoiceFile = jfc.getSelectedFile();
+                        returnValue = jfc.showOpenDialog(null);
+                        selectedInvoiceItemsFile = jfc.getSelectedFile();
+                        if (returnValue == JFileChooser.APPROVE_OPTION ) {
+                            System.out.println(selectedInvoiceFile.getAbsolutePath());
+                            System.out.println(selectedInvoiceItemsFile.getAbsolutePath());
+                        }
+                    }
+                    invoiceFile = selectedInvoiceFile.getAbsolutePath();
+                    invoiceItemsFile = selectedInvoiceItemsFile.getAbsolutePath();
+                    invoiceTableController.loadDataFromFile(invoiceFile,invoiceItemsFile);
+
+                } catch (IOException ex1) {
+                    throw new RuntimeException(ex1);
                 }
             }
         });
@@ -131,6 +169,8 @@ import java.io.IOException;
                                         .addComponent(jBtn_create, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
                                         .addComponent(jBtn_delete, javax.swing.GroupLayout.DEFAULT_SIZE,37, Short.MAX_VALUE))
                                         .addComponent(jBtn_saveData, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                                        .addComponent(jBtn_loadData, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+
                                 .addContainerGap()
                         )
         );

@@ -26,15 +26,15 @@ public class InvoiceTableController {
 
     public void init() throws IOException {
         this.setModel();
-        this.loadDataFromFile();
+        //this.loadDataFromFile();
         this.addListeners();
         this.addSelectionRowAction();
     }
 
-    private void loadDataFromFile() throws IOException {
+    public void loadDataFromFile(String invoiceFile, String invoiceItemsFile) throws IOException {
         DefaultTableModel model_invoices = model;
 
-        Scanner scan_invoices = new Scanner(new File("C:\\Users\\mennatallahw\\Desktop\\invoices.csv"));
+        Scanner scan_invoices = new Scanner(new File(invoiceFile));
         String[] invoice_record = new String[4];
         while(scan_invoices.hasNext())
         {
@@ -44,7 +44,7 @@ public class InvoiceTableController {
             model_invoices.addRow(invoice_record);
         }
 
-        Scanner scan_items = new Scanner(new File("C:\\Users\\mennatallahw\\Desktop\\invoice_items.csv"));
+        Scanner scan_items = new Scanner(new File(invoiceItemsFile));
         String[] item_record = new String[5];
         while(scan_items.hasNext())
         {
@@ -110,14 +110,14 @@ public class InvoiceTableController {
         invoice_header_data.remove(currentSelectedIndex - 1);
     }
 
-    public void saveData() throws IOException {
+    public void saveData(String invoiceFile, String invoiceItemsFile) throws IOException {
 
         String invoice_header_line = new String();
         String invoice_item_line = new String();
 
         try
         {
-            String filename= "C:\\Users\\mennatallahw\\Desktop\\invoices.csv";
+            String filename= invoiceFile;
             FileWriter fw1 = new FileWriter(filename,false);
             for (int i = 0; i < invoice_header_data.size(); i++) {
                 invoice_header_line = String.join(",", invoice_header_data.get(i).getModelRow());
@@ -132,7 +132,7 @@ public class InvoiceTableController {
 
         try
         {
-            String filename= "C:\\Users\\mennatallahw\\Desktop\\invoice_items.csv";
+            String filename= invoiceItemsFile;
             FileWriter fw2 = new FileWriter(filename,false);
             for (int i = 0; i < invoice_items_data.size(); i++) {
                 invoice_item_line = String.join(",", invoice_items_data.get(i).getModelRow());
